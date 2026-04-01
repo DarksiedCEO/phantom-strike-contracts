@@ -1,0 +1,218 @@
+{
+  "$ref": "#/definitions/signal",
+  "definitions": {
+    "signal": {
+      "type": "object",
+      "properties": {
+        "signal_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "$ref": "#/definitions/signal/properties/title"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "anomaly",
+            "campaign",
+            "entity",
+            "threat",
+            "lead"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "triaged",
+            "validated",
+            "escalated",
+            "suppressed",
+            "resolved"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "informational",
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_at": {
+          "$ref": "#/definitions/signal/properties/observed_at"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/signal/properties/observed_at"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/signal/properties/title"
+          },
+          "default": []
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "confidence_band": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "guarded",
+                  "elevated",
+                  "confirmed"
+                ]
+              },
+              "rationale": {
+                "$ref": "#/definitions/signal/properties/title"
+              },
+              "generated_at": {
+                "$ref": "#/definitions/signal/properties/observed_at"
+              }
+            },
+            "required": [
+              "score",
+              "confidence_band",
+              "rationale",
+              "generated_at"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "related_source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/signal/properties/signal_id"
+          },
+          "default": []
+        },
+        "audit": {
+          "type": "object",
+          "properties": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "contractVersion": {
+                  "type": "string",
+                  "const": "v1"
+                },
+                "schemaName": {
+                  "$ref": "#/definitions/signal/properties/title"
+                },
+                "schemaRevision": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "packageVersion": {
+                  "type": "string",
+                  "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.-]+)?$"
+                }
+              },
+              "required": [
+                "contractVersion",
+                "schemaName",
+                "schemaRevision",
+                "packageVersion"
+              ],
+              "additionalProperties": false
+            },
+            "trace": {
+              "type": "object",
+              "properties": {
+                "request_id": {
+                  "$ref": "#/definitions/signal/properties/signal_id"
+                },
+                "trace_id": {
+                  "type": "string",
+                  "minLength": 8,
+                  "maxLength": 128
+                },
+                "correlation_id": {
+                  "$ref": "#/definitions/signal/properties/signal_id"
+                },
+                "actor_service": {
+                  "type": "string",
+                  "enum": [
+                    "contracts",
+                    "core",
+                    "workflows",
+                    "intel",
+                    "console"
+                  ]
+                },
+                "environment": {
+                  "type": "string",
+                  "enum": [
+                    "local",
+                    "dev",
+                    "staging",
+                    "production"
+                  ]
+                }
+              },
+              "required": [
+                "request_id",
+                "trace_id",
+                "correlation_id",
+                "actor_service",
+                "environment"
+              ],
+              "additionalProperties": false
+            },
+            "recorded_at": {
+              "$ref": "#/definitions/signal/properties/observed_at"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/signal/properties/title"
+              },
+              "default": []
+            }
+          },
+          "required": [
+            "schema",
+            "trace",
+            "recorded_at"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "signal_id",
+        "title",
+        "summary",
+        "category",
+        "status",
+        "severity",
+        "observed_at",
+        "created_at",
+        "updated_at",
+        "scores",
+        "audit"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

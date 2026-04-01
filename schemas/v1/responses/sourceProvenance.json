@@ -1,0 +1,338 @@
+{
+  "$ref": "#/definitions/sourceProvenance",
+  "definitions": {
+    "sourceProvenance": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "const": true
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "audit": {
+                  "type": "object",
+                  "properties": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "contractVersion": {
+                          "type": "string",
+                          "const": "v1"
+                        },
+                        "schemaName": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "schemaRevision": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "packageVersion": {
+                          "type": "string",
+                          "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.-]+)?$"
+                        }
+                      },
+                      "required": [
+                        "contractVersion",
+                        "schemaName",
+                        "schemaRevision",
+                        "packageVersion"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "trace": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "trace_id": {
+                          "type": "string",
+                          "minLength": 8,
+                          "maxLength": 128
+                        },
+                        "correlation_id": {
+                          "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                        },
+                        "actor_service": {
+                          "type": "string",
+                          "enum": [
+                            "contracts",
+                            "core",
+                            "workflows",
+                            "intel",
+                            "console"
+                          ]
+                        },
+                        "environment": {
+                          "type": "string",
+                          "enum": [
+                            "local",
+                            "dev",
+                            "staging",
+                            "production"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "request_id",
+                        "trace_id",
+                        "correlation_id",
+                        "actor_service",
+                        "environment"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "recorded_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                      },
+                      "default": []
+                    }
+                  },
+                  "required": [
+                    "schema",
+                    "trace",
+                    "recorded_at"
+                  ],
+                  "additionalProperties": false
+                },
+                "confidence_band": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "guarded",
+                    "elevated",
+                    "confirmed"
+                  ]
+                },
+                "warnings": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                  },
+                  "default": []
+                }
+              },
+              "required": [
+                "audit"
+              ],
+              "additionalProperties": false
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "provenance_id": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                },
+                "signal_id": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                },
+                "source": {
+                  "type": "object",
+                  "properties": {
+                    "source_id": {
+                      "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                    },
+                    "source_type": {
+                      "type": "string",
+                      "enum": [
+                        "osint",
+                        "internal",
+                        "partner",
+                        "human",
+                        "synthetic"
+                      ]
+                    },
+                    "source_locator": {
+                      "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                    },
+                    "original_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "collection_method": {
+                      "type": "string",
+                      "enum": [
+                        "manual_entry",
+                        "api_pull",
+                        "web_scrape",
+                        "partner_feed",
+                        "sensor_ingest",
+                        "analyst_upload"
+                      ]
+                    },
+                    "collected_at": {
+                      "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                    },
+                    "reliability_tier": {
+                      "type": "string",
+                      "enum": [
+                        "unverified",
+                        "low",
+                        "medium",
+                        "high",
+                        "trusted"
+                      ]
+                    },
+                    "authenticity_assessment": {
+                      "type": "string",
+                      "enum": [
+                        "unknown",
+                        "suspected_authentic",
+                        "verified_authentic",
+                        "manipulated",
+                        "spoofed"
+                      ]
+                    },
+                    "ingestion_version": {
+                      "type": "string",
+                      "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.-]+)?$"
+                    },
+                    "content_fingerprint": {
+                      "type": "string",
+                      "pattern": "^[a-fA-F0-9]{64}$"
+                    }
+                  },
+                  "required": [
+                    "source_id",
+                    "source_type",
+                    "source_locator",
+                    "collection_method",
+                    "collected_at",
+                    "reliability_tier",
+                    "authenticity_assessment",
+                    "ingestion_version"
+                  ],
+                  "additionalProperties": false
+                },
+                "observed_at": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "created_at": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "updated_at": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "collector": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "chain_of_custody": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "stage": {
+                        "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                      },
+                      "actor": {
+                        "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                      },
+                      "occurred_at": {
+                        "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                      },
+                      "note": {
+                        "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                      }
+                    },
+                    "required": [
+                      "stage",
+                      "actor",
+                      "occurred_at"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "dedupe_key": {
+                  "type": "string",
+                  "minLength": 8,
+                  "maxLength": 256
+                },
+                "audit": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit"
+                }
+              },
+              "required": [
+                "provenance_id",
+                "signal_id",
+                "source",
+                "observed_at",
+                "created_at",
+                "updated_at",
+                "collector",
+                "chain_of_custody",
+                "dedupe_key",
+                "audit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "meta",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "const": false
+            },
+            "meta": {
+              "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta"
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "message": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "details": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "trace_id": {
+                  "$ref": "#/definitions/sourceProvenance/anyOf/0/properties/meta/properties/audit/properties/trace/properties/trace_id"
+                },
+                "retryable": {
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "trace_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "meta",
+            "error"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

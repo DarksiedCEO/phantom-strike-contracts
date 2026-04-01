@@ -1,0 +1,359 @@
+{
+  "$ref": "#/definitions/filAudit",
+  "definitions": {
+    "filAudit": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "const": true
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "audit": {
+                  "type": "object",
+                  "properties": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "contractVersion": {
+                          "type": "string",
+                          "const": "v1"
+                        },
+                        "schemaName": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "schemaRevision": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "packageVersion": {
+                          "type": "string",
+                          "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.-]+)?$"
+                        }
+                      },
+                      "required": [
+                        "contractVersion",
+                        "schemaName",
+                        "schemaRevision",
+                        "packageVersion"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "trace": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "trace_id": {
+                          "type": "string",
+                          "minLength": 8,
+                          "maxLength": 128
+                        },
+                        "correlation_id": {
+                          "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                        },
+                        "actor_service": {
+                          "type": "string",
+                          "enum": [
+                            "contracts",
+                            "core",
+                            "workflows",
+                            "intel",
+                            "console"
+                          ]
+                        },
+                        "environment": {
+                          "type": "string",
+                          "enum": [
+                            "local",
+                            "dev",
+                            "staging",
+                            "production"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "request_id",
+                        "trace_id",
+                        "correlation_id",
+                        "actor_service",
+                        "environment"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "recorded_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                      },
+                      "default": []
+                    }
+                  },
+                  "required": [
+                    "schema",
+                    "trace",
+                    "recorded_at"
+                  ],
+                  "additionalProperties": false
+                },
+                "confidence_band": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "guarded",
+                    "elevated",
+                    "confirmed"
+                  ]
+                },
+                "warnings": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                  },
+                  "default": []
+                }
+              },
+              "required": [
+                "audit"
+              ],
+              "additionalProperties": false
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "audit_id": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                },
+                "signal_id": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                },
+                "outcome": {
+                  "type": "string",
+                  "enum": [
+                    "pass",
+                    "fail",
+                    "warning"
+                  ]
+                },
+                "audit_severity": {
+                  "type": "string",
+                  "enum": [
+                    "notice",
+                    "warning",
+                    "critical"
+                  ]
+                },
+                "graveyard_category": {
+                  "type": "string",
+                  "enum": [
+                    "false_positive",
+                    "signal_decay",
+                    "source_failure",
+                    "workflow_breakdown",
+                    "operator_drift",
+                    "model_deception"
+                  ]
+                },
+                "detected_trigger": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "first_ignored_symptom": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "official_cause": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "actual_cause": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "last_healthy_signal": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "date_of_functional_death": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "recommended_restraint_action": {
+                  "type": "string",
+                  "enum": [
+                    "pause_workflow",
+                    "require_human_review",
+                    "block_distribution",
+                    "quarantine_signal",
+                    "rollback_state"
+                  ]
+                },
+                "requires_escalation": {
+                  "type": "boolean"
+                },
+                "review_status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "in_review",
+                    "approved",
+                    "rejected",
+                    "overridden"
+                  ]
+                },
+                "evaluated_by": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/trace/properties/actor_service"
+                },
+                "occurred_at": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "created_at": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "updated_at": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "findings": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                  },
+                  "minItems": 1
+                },
+                "controls_checked": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                  },
+                  "minItems": 1
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "evidence_id": {
+                        "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "event",
+                          "document",
+                          "operator-note",
+                          "system-log"
+                        ]
+                      },
+                      "summary": {
+                        "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                      },
+                      "attached_at": {
+                        "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                      }
+                    },
+                    "required": [
+                      "evidence_id",
+                      "kind",
+                      "summary",
+                      "attached_at"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "default": []
+                },
+                "remediation_plan": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "audit": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit"
+                }
+              },
+              "required": [
+                "audit_id",
+                "signal_id",
+                "outcome",
+                "audit_severity",
+                "graveyard_category",
+                "detected_trigger",
+                "first_ignored_symptom",
+                "official_cause",
+                "actual_cause",
+                "last_healthy_signal",
+                "date_of_functional_death",
+                "recommended_restraint_action",
+                "requires_escalation",
+                "review_status",
+                "evaluated_by",
+                "occurred_at",
+                "created_at",
+                "updated_at",
+                "findings",
+                "controls_checked",
+                "audit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "meta",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "const": false
+            },
+            "meta": {
+              "$ref": "#/definitions/filAudit/anyOf/0/properties/meta"
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "message": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "details": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "trace_id": {
+                  "$ref": "#/definitions/filAudit/anyOf/0/properties/meta/properties/audit/properties/trace/properties/trace_id"
+                },
+                "retryable": {
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "trace_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "meta",
+            "error"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

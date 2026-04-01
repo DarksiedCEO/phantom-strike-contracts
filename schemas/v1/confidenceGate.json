@@ -1,0 +1,259 @@
+{
+  "$ref": "#/definitions/confidenceGate",
+  "definitions": {
+    "confidenceGate": {
+      "type": "object",
+      "properties": {
+        "gate_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "signal_id": {
+          "$ref": "#/definitions/confidenceGate/properties/gate_id"
+        },
+        "gate": {
+          "type": "string",
+          "enum": [
+            "confidence_gate",
+            "authenticity_gate",
+            "provenance_gate",
+            "escalation_gate"
+          ]
+        },
+        "gate_state": {
+          "type": "string",
+          "enum": [
+            "open",
+            "review",
+            "blocked",
+            "approved"
+          ]
+        },
+        "confidence_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "confidence_band": {
+          "type": "string",
+          "enum": [
+            "low",
+            "guarded",
+            "elevated",
+            "confirmed"
+          ]
+        },
+        "supporting_evidence_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contradicting_evidence_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_diversity_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "authenticity_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "recommended_disposition": {
+          "type": "string",
+          "enum": [
+            "approve",
+            "queue_review",
+            "escalate",
+            "suppress",
+            "reject"
+          ]
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "in_review",
+            "approved",
+            "rejected",
+            "overridden"
+          ]
+        },
+        "inaction_justification_required": {
+          "type": "boolean"
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_at": {
+          "$ref": "#/definitions/confidenceGate/properties/occurred_at"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/confidenceGate/properties/occurred_at"
+        },
+        "factors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "factor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "weight": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "value": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "rationale": {
+                "$ref": "#/definitions/confidenceGate/properties/factors/items/properties/factor"
+              }
+            },
+            "required": [
+              "factor",
+              "weight",
+              "value",
+              "rationale"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "reviewer_notes": {
+          "$ref": "#/definitions/confidenceGate/properties/factors/items/properties/factor"
+        },
+        "audit": {
+          "type": "object",
+          "properties": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "contractVersion": {
+                  "type": "string",
+                  "const": "v1"
+                },
+                "schemaName": {
+                  "$ref": "#/definitions/confidenceGate/properties/factors/items/properties/factor"
+                },
+                "schemaRevision": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "packageVersion": {
+                  "type": "string",
+                  "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.-]+)?$"
+                }
+              },
+              "required": [
+                "contractVersion",
+                "schemaName",
+                "schemaRevision",
+                "packageVersion"
+              ],
+              "additionalProperties": false
+            },
+            "trace": {
+              "type": "object",
+              "properties": {
+                "request_id": {
+                  "$ref": "#/definitions/confidenceGate/properties/gate_id"
+                },
+                "trace_id": {
+                  "type": "string",
+                  "minLength": 8,
+                  "maxLength": 128
+                },
+                "correlation_id": {
+                  "$ref": "#/definitions/confidenceGate/properties/gate_id"
+                },
+                "actor_service": {
+                  "type": "string",
+                  "enum": [
+                    "contracts",
+                    "core",
+                    "workflows",
+                    "intel",
+                    "console"
+                  ]
+                },
+                "environment": {
+                  "type": "string",
+                  "enum": [
+                    "local",
+                    "dev",
+                    "staging",
+                    "production"
+                  ]
+                }
+              },
+              "required": [
+                "request_id",
+                "trace_id",
+                "correlation_id",
+                "actor_service",
+                "environment"
+              ],
+              "additionalProperties": false
+            },
+            "recorded_at": {
+              "$ref": "#/definitions/confidenceGate/properties/occurred_at"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/confidenceGate/properties/factors/items/properties/factor"
+              },
+              "default": []
+            }
+          },
+          "required": [
+            "schema",
+            "trace",
+            "recorded_at"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "gate_id",
+        "signal_id",
+        "gate",
+        "gate_state",
+        "confidence_score",
+        "confidence_band",
+        "supporting_evidence_count",
+        "contradicting_evidence_count",
+        "source_diversity_score",
+        "authenticity_score",
+        "risk_level",
+        "recommended_disposition",
+        "review_status",
+        "inaction_justification_required",
+        "occurred_at",
+        "created_at",
+        "updated_at",
+        "factors",
+        "audit"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

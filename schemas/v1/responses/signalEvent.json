@@ -1,0 +1,270 @@
+{
+  "$ref": "#/definitions/signalEvent",
+  "definitions": {
+    "signalEvent": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "const": true
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "audit": {
+                  "type": "object",
+                  "properties": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "contractVersion": {
+                          "type": "string",
+                          "const": "v1"
+                        },
+                        "schemaName": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "schemaRevision": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "packageVersion": {
+                          "type": "string",
+                          "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.-]+)?$"
+                        }
+                      },
+                      "required": [
+                        "contractVersion",
+                        "schemaName",
+                        "schemaRevision",
+                        "packageVersion"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "trace": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "trace_id": {
+                          "type": "string",
+                          "minLength": 8,
+                          "maxLength": 128
+                        },
+                        "correlation_id": {
+                          "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                        },
+                        "actor_service": {
+                          "type": "string",
+                          "enum": [
+                            "contracts",
+                            "core",
+                            "workflows",
+                            "intel",
+                            "console"
+                          ]
+                        },
+                        "environment": {
+                          "type": "string",
+                          "enum": [
+                            "local",
+                            "dev",
+                            "staging",
+                            "production"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "request_id",
+                        "trace_id",
+                        "correlation_id",
+                        "actor_service",
+                        "environment"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "recorded_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                      },
+                      "default": []
+                    }
+                  },
+                  "required": [
+                    "schema",
+                    "trace",
+                    "recorded_at"
+                  ],
+                  "additionalProperties": false
+                },
+                "confidence_band": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "guarded",
+                    "elevated",
+                    "confirmed"
+                  ]
+                },
+                "warnings": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                  },
+                  "default": []
+                }
+              },
+              "required": [
+                "audit"
+              ],
+              "additionalProperties": false
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "event_id": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                },
+                "event_type": {
+                  "type": "string",
+                  "enum": [
+                    "signal.ingested",
+                    "signal.normalized",
+                    "signal.scored",
+                    "signal.review.requested",
+                    "signal.escalated"
+                  ]
+                },
+                "signal_id": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                },
+                "prior_signal_status": {
+                  "type": "string",
+                  "enum": [
+                    "draft",
+                    "triaged",
+                    "validated",
+                    "escalated",
+                    "suppressed",
+                    "resolved"
+                  ]
+                },
+                "resulting_signal_status": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/data/properties/prior_signal_status"
+                },
+                "workflow_disposition": {
+                  "type": "string",
+                  "enum": [
+                    "promote",
+                    "hold",
+                    "escalate",
+                    "suppress",
+                    "archive"
+                  ]
+                },
+                "occurred_at": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "created_at": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "producer": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/trace/properties/actor_service"
+                },
+                "payload_version": {
+                  "type": "string",
+                  "const": "v1"
+                },
+                "payload": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "idempotency_key": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "audit": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit"
+                }
+              },
+              "required": [
+                "event_id",
+                "event_type",
+                "signal_id",
+                "occurred_at",
+                "created_at",
+                "producer",
+                "payload_version",
+                "idempotency_key",
+                "audit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "meta",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "const": false
+            },
+            "meta": {
+              "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta"
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "message": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "details": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "trace_id": {
+                  "$ref": "#/definitions/signalEvent/anyOf/0/properties/meta/properties/audit/properties/trace/properties/trace_id"
+                },
+                "retryable": {
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "trace_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "meta",
+            "error"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -1,0 +1,266 @@
+{
+  "$ref": "#/definitions/filAudit",
+  "definitions": {
+    "filAudit": {
+      "type": "object",
+      "properties": {
+        "audit_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "signal_id": {
+          "$ref": "#/definitions/filAudit/properties/audit_id"
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "warning"
+          ]
+        },
+        "audit_severity": {
+          "type": "string",
+          "enum": [
+            "notice",
+            "warning",
+            "critical"
+          ]
+        },
+        "graveyard_category": {
+          "type": "string",
+          "enum": [
+            "false_positive",
+            "signal_decay",
+            "source_failure",
+            "workflow_breakdown",
+            "operator_drift",
+            "model_deception"
+          ]
+        },
+        "detected_trigger": {
+          "type": "string",
+          "minLength": 1
+        },
+        "first_ignored_symptom": {
+          "$ref": "#/definitions/filAudit/properties/detected_trigger"
+        },
+        "official_cause": {
+          "$ref": "#/definitions/filAudit/properties/detected_trigger"
+        },
+        "actual_cause": {
+          "$ref": "#/definitions/filAudit/properties/detected_trigger"
+        },
+        "last_healthy_signal": {
+          "$ref": "#/definitions/filAudit/properties/detected_trigger"
+        },
+        "date_of_functional_death": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "recommended_restraint_action": {
+          "type": "string",
+          "enum": [
+            "pause_workflow",
+            "require_human_review",
+            "block_distribution",
+            "quarantine_signal",
+            "rollback_state"
+          ]
+        },
+        "requires_escalation": {
+          "type": "boolean"
+        },
+        "review_status": {
+          "type": "string",
+          "enum": [
+            "pending",
+            "in_review",
+            "approved",
+            "rejected",
+            "overridden"
+          ]
+        },
+        "evaluated_by": {
+          "type": "string",
+          "enum": [
+            "contracts",
+            "core",
+            "workflows",
+            "intel",
+            "console"
+          ]
+        },
+        "occurred_at": {
+          "$ref": "#/definitions/filAudit/properties/date_of_functional_death"
+        },
+        "created_at": {
+          "$ref": "#/definitions/filAudit/properties/date_of_functional_death"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/filAudit/properties/date_of_functional_death"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/filAudit/properties/detected_trigger"
+          },
+          "minItems": 1
+        },
+        "controls_checked": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/filAudit/properties/detected_trigger"
+          },
+          "minItems": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "evidence_id": {
+                "$ref": "#/definitions/filAudit/properties/audit_id"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "event",
+                  "document",
+                  "operator-note",
+                  "system-log"
+                ]
+              },
+              "summary": {
+                "$ref": "#/definitions/filAudit/properties/detected_trigger"
+              },
+              "attached_at": {
+                "$ref": "#/definitions/filAudit/properties/date_of_functional_death"
+              }
+            },
+            "required": [
+              "evidence_id",
+              "kind",
+              "summary",
+              "attached_at"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "remediation_plan": {
+          "$ref": "#/definitions/filAudit/properties/detected_trigger"
+        },
+        "audit": {
+          "type": "object",
+          "properties": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "contractVersion": {
+                  "type": "string",
+                  "const": "v1"
+                },
+                "schemaName": {
+                  "$ref": "#/definitions/filAudit/properties/detected_trigger"
+                },
+                "schemaRevision": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "packageVersion": {
+                  "type": "string",
+                  "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.-]+)?$"
+                }
+              },
+              "required": [
+                "contractVersion",
+                "schemaName",
+                "schemaRevision",
+                "packageVersion"
+              ],
+              "additionalProperties": false
+            },
+            "trace": {
+              "type": "object",
+              "properties": {
+                "request_id": {
+                  "$ref": "#/definitions/filAudit/properties/audit_id"
+                },
+                "trace_id": {
+                  "type": "string",
+                  "minLength": 8,
+                  "maxLength": 128
+                },
+                "correlation_id": {
+                  "$ref": "#/definitions/filAudit/properties/audit_id"
+                },
+                "actor_service": {
+                  "$ref": "#/definitions/filAudit/properties/evaluated_by"
+                },
+                "environment": {
+                  "type": "string",
+                  "enum": [
+                    "local",
+                    "dev",
+                    "staging",
+                    "production"
+                  ]
+                }
+              },
+              "required": [
+                "request_id",
+                "trace_id",
+                "correlation_id",
+                "actor_service",
+                "environment"
+              ],
+              "additionalProperties": false
+            },
+            "recorded_at": {
+              "$ref": "#/definitions/filAudit/properties/date_of_functional_death"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/filAudit/properties/detected_trigger"
+              },
+              "default": []
+            }
+          },
+          "required": [
+            "schema",
+            "trace",
+            "recorded_at"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "audit_id",
+        "signal_id",
+        "outcome",
+        "audit_severity",
+        "graveyard_category",
+        "detected_trigger",
+        "first_ignored_symptom",
+        "official_cause",
+        "actual_cause",
+        "last_healthy_signal",
+        "date_of_functional_death",
+        "recommended_restraint_action",
+        "requires_escalation",
+        "review_status",
+        "evaluated_by",
+        "occurred_at",
+        "created_at",
+        "updated_at",
+        "findings",
+        "controls_checked",
+        "audit"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

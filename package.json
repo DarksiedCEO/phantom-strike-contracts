@@ -1,0 +1,46 @@
+{
+  "name": "@phantom-strike/contracts",
+  "version": "0.1.0",
+  "description": "Canonical schemas and runtime contracts for PhantomStrike v2.",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./v1": {
+      "types": "./dist/v1/index.d.ts",
+      "import": "./dist/v1/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "src"
+  ],
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "schemas:generate": "node --import tsx/esm ./scripts/generate-json-schemas.ts",
+    "schemas:check": "node --import tsx/esm ./scripts/generate-json-schemas.ts --check",
+    "verify": "pnpm typecheck && pnpm test && pnpm schemas:check"
+  },
+  "dependencies": {
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "zod-to-json-schema": "^3.24.6"
+  }
+}

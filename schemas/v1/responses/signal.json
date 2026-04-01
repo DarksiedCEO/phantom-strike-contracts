@@ -1,0 +1,305 @@
+{
+  "$ref": "#/definitions/signal",
+  "definitions": {
+    "signal": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "const": true
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "audit": {
+                  "type": "object",
+                  "properties": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "contractVersion": {
+                          "type": "string",
+                          "const": "v1"
+                        },
+                        "schemaName": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "schemaRevision": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "packageVersion": {
+                          "type": "string",
+                          "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.-]+)?$"
+                        }
+                      },
+                      "required": [
+                        "contractVersion",
+                        "schemaName",
+                        "schemaRevision",
+                        "packageVersion"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "trace": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "trace_id": {
+                          "type": "string",
+                          "minLength": 8,
+                          "maxLength": 128
+                        },
+                        "correlation_id": {
+                          "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                        },
+                        "actor_service": {
+                          "type": "string",
+                          "enum": [
+                            "contracts",
+                            "core",
+                            "workflows",
+                            "intel",
+                            "console"
+                          ]
+                        },
+                        "environment": {
+                          "type": "string",
+                          "enum": [
+                            "local",
+                            "dev",
+                            "staging",
+                            "production"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "request_id",
+                        "trace_id",
+                        "correlation_id",
+                        "actor_service",
+                        "environment"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "recorded_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                      },
+                      "default": []
+                    }
+                  },
+                  "required": [
+                    "schema",
+                    "trace",
+                    "recorded_at"
+                  ],
+                  "additionalProperties": false
+                },
+                "confidence_band": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "guarded",
+                    "elevated",
+                    "confirmed"
+                  ]
+                },
+                "warnings": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                  },
+                  "default": []
+                }
+              },
+              "required": [
+                "audit"
+              ],
+              "additionalProperties": false
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "signal_id": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                },
+                "title": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "summary": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "anomaly",
+                    "campaign",
+                    "entity",
+                    "threat",
+                    "lead"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "draft",
+                    "triaged",
+                    "validated",
+                    "escalated",
+                    "suppressed",
+                    "resolved"
+                  ]
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "informational",
+                    "low",
+                    "medium",
+                    "high",
+                    "critical"
+                  ]
+                },
+                "observed_at": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "created_at": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "updated_at": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                  },
+                  "default": []
+                },
+                "scores": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "confidence_band": {
+                        "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/confidence_band"
+                      },
+                      "rationale": {
+                        "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                      },
+                      "generated_at": {
+                        "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/recorded_at"
+                      }
+                    },
+                    "required": [
+                      "score",
+                      "confidence_band",
+                      "rationale",
+                      "generated_at"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 1
+                },
+                "related_source_ids": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/trace/properties/request_id"
+                  },
+                  "default": []
+                },
+                "audit": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit"
+                }
+              },
+              "required": [
+                "signal_id",
+                "title",
+                "summary",
+                "category",
+                "status",
+                "severity",
+                "observed_at",
+                "created_at",
+                "updated_at",
+                "scores",
+                "audit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "meta",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "const": false
+            },
+            "meta": {
+              "$ref": "#/definitions/signal/anyOf/0/properties/meta"
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "message": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/schema/properties/schemaName"
+                },
+                "details": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "trace_id": {
+                  "$ref": "#/definitions/signal/anyOf/0/properties/meta/properties/audit/properties/trace/properties/trace_id"
+                },
+                "retryable": {
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "required": [
+                "code",
+                "message",
+                "trace_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "success",
+            "meta",
+            "error"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
