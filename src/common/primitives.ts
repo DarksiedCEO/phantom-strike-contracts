@@ -31,6 +31,12 @@ export const WorkflowDispositionSchema = z.enum([
   "suppress",
   "archive"
 ]);
+export const SignalDecisionDispositionSchema = z.enum([
+  "promote",
+  "hold",
+  "suppress",
+  "escalate"
+]);
 export const SourceTypeSchema = z.enum(["osint", "internal", "partner", "human", "synthetic"]);
 export const SourceCollectionMethodSchema = z.enum([
   "manual_entry",
@@ -101,6 +107,7 @@ export type ConfidenceBand = z.infer<typeof ConfidenceBandSchema>;
 export type RiskLevel = z.infer<typeof RiskLevelSchema>;
 export type ReviewStatus = z.infer<typeof ReviewStatusSchema>;
 export type WorkflowDisposition = z.infer<typeof WorkflowDispositionSchema>;
+export type SignalDecisionDisposition = z.infer<typeof SignalDecisionDispositionSchema>;
 export type SourceType = z.infer<typeof SourceTypeSchema>;
 export type SourceCollectionMethod = z.infer<typeof SourceCollectionMethodSchema>;
 export type SourceReliabilityTier = z.infer<typeof SourceReliabilityTierSchema>;

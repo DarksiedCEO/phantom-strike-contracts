@@ -5,6 +5,7 @@ import {
   CURRENT_CONTRACT_VERSION,
   PhantomStrikeContracts,
   PhantomStrikeResponseSchemas,
+  SignalDecisionSchema,
   validateContract
 } from "../src/index.js";
 
@@ -99,5 +100,59 @@ describe("phantom-strike contracts", () => {
     };
 
     expect(() => PhantomStrikeResponseSchemas.signal.parse(envelope)).not.toThrow();
+  });
+
+  it("parses a signal decision payload through the shared registry", () => {
+    const payload = {
+      signal_id: "df1eab71-aa5f-4ce2-9915-64ccf314e3b9",
+      baseline_confidence: 0.62,
+      confidence_delta: 0.128,
+      updated_confidence: 0.748,
+      confidence_band: "elevated",
+      disposition: "escalate",
+      reasoning: "Supporting evidence outweighed contradiction after adversarial penalty.",
+      trace_id: "trace-001-alpha",
+      correlation_id: "e5b11411-2732-486f-9d0a-f4144ea20395"
+    };
+
+    expect(validateContract("signalDecision", payload)).toEqual(
+      SignalDecisionSchema.parse(payload)
+    );
+  });
+
+  it("keeps the decision submission response envelope deterministic", () => {
+    const envelope = {
+      success: true,
+      meta: {
+        audit: {
+          schema: {
+            contractVersion: "v1",
+            schemaName: "decision-submission-result",
+            schemaRevision: 0,
+            packageVersion: "0.1.0"
+          },
+          trace: {
+            request_id: "0b315677-0912-4f5a-a25e-24d33c841d88",
+            trace_id: "trace-001-alpha",
+            correlation_id: "e5b11411-2732-486f-9d0a-f4144ea20395",
+            actor_service: "core",
+            environment: "dev"
+          },
+          recorded_at: "2026-03-31T12:00:00Z",
+          tags: []
+        },
+        warnings: []
+      },
+      data: {
+        signal_id: "df1eab71-aa5f-4ce2-9915-64ccf314e3b9",
+        submitted: true,
+        target_service: "core",
+        target_endpoint: "/v1/signals/df1eab71-aa5f-4ce2-9915-64ccf314e3b9/decision",
+        trace_id: "trace-001-alpha",
+        correlation_id: "e5b11411-2732-486f-9d0a-f4144ea20395"
+      }
+    };
+
+    expect(() => PhantomStrikeResponseSchemas.decisionSubmissionResult.parse(envelope)).not.toThrow();
   });
 });

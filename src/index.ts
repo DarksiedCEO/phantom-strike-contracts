@@ -4,9 +4,13 @@ import { createResponseEnvelopeSchema } from "./common/envelope.js";
 import {
   ConfidenceGateContract,
   ConfidenceGateSchema,
+  DecisionSubmissionResultContract,
+  DecisionSubmissionResultSchema,
   FilAuditContract,
   FilAuditSchema,
   SignalContract,
+  SignalDecisionContract,
+  SignalDecisionSchema,
   SignalEventContract,
   SignalEventSchema,
   SignalSchema,
@@ -26,8 +30,10 @@ export const CURRENT_CONTRACT_VERSION = "v1" as const;
 export const PhantomStrikeContracts = {
   v1: {
     confidenceGate: ConfidenceGateContract,
+    decisionSubmissionResult: DecisionSubmissionResultContract,
     filAudit: FilAuditContract,
     signal: SignalContract,
+    signalDecision: SignalDecisionContract,
     signalEvent: SignalEventContract,
     sourceProvenance: SourceProvenanceContract
   }
@@ -35,16 +41,20 @@ export const PhantomStrikeContracts = {
 
 export const PhantomStrikeSchemas = {
   confidenceGate: ConfidenceGateSchema,
+  decisionSubmissionResult: DecisionSubmissionResultSchema,
   filAudit: FilAuditSchema,
   signal: SignalSchema,
+  signalDecision: SignalDecisionSchema,
   signalEvent: SignalEventSchema,
   sourceProvenance: SourceProvenanceSchema
 } satisfies Record<string, z.ZodTypeAny>;
 
 export const PhantomStrikeResponseSchemas = {
   confidenceGate: createResponseEnvelopeSchema(ConfidenceGateSchema),
+  decisionSubmissionResult: createResponseEnvelopeSchema(DecisionSubmissionResultSchema),
   filAudit: createResponseEnvelopeSchema(FilAuditSchema),
   signal: createResponseEnvelopeSchema(SignalSchema),
+  signalDecision: createResponseEnvelopeSchema(SignalDecisionSchema),
   signalEvent: createResponseEnvelopeSchema(SignalEventSchema),
   sourceProvenance: createResponseEnvelopeSchema(SourceProvenanceSchema)
 } as const;

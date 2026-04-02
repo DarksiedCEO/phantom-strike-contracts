@@ -1,0 +1,49 @@
+{
+  "$ref": "#/definitions/decisionSubmissionResult",
+  "definitions": {
+    "decisionSubmissionResult": {
+      "type": "object",
+      "properties": {
+        "signal_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "submitted": {
+          "type": "boolean"
+        },
+        "target_service": {
+          "type": "string",
+          "enum": [
+            "contracts",
+            "core",
+            "workflows",
+            "intel",
+            "console"
+          ]
+        },
+        "target_endpoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trace_id": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 128
+        },
+        "correlation_id": {
+          "$ref": "#/definitions/decisionSubmissionResult/properties/signal_id"
+        }
+      },
+      "required": [
+        "signal_id",
+        "submitted",
+        "target_service",
+        "target_endpoint",
+        "trace_id",
+        "correlation_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
