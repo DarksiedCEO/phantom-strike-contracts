@@ -10,6 +10,8 @@ import {
   FilAuditSchema,
   SignalContract,
   SignalDecisionContract,
+  SignalDecisionRecordContract,
+  SignalDecisionRecordSchema,
   SignalDecisionSchema,
   SignalEventContract,
   SignalEventSchema,
@@ -34,6 +36,7 @@ export const PhantomStrikeContracts = {
     filAudit: FilAuditContract,
     signal: SignalContract,
     signalDecision: SignalDecisionContract,
+    signalDecisionRecord: SignalDecisionRecordContract,
     signalEvent: SignalEventContract,
     sourceProvenance: SourceProvenanceContract
   }
@@ -45,6 +48,7 @@ export const PhantomStrikeSchemas = {
   filAudit: FilAuditSchema,
   signal: SignalSchema,
   signalDecision: SignalDecisionSchema,
+  signalDecisionRecord: SignalDecisionRecordSchema,
   signalEvent: SignalEventSchema,
   sourceProvenance: SourceProvenanceSchema
 } satisfies Record<string, z.ZodTypeAny>;
@@ -55,6 +59,7 @@ export const PhantomStrikeResponseSchemas = {
   filAudit: createResponseEnvelopeSchema(FilAuditSchema),
   signal: createResponseEnvelopeSchema(SignalSchema),
   signalDecision: createResponseEnvelopeSchema(SignalDecisionSchema),
+  signalDecisionRecord: createResponseEnvelopeSchema(SignalDecisionRecordSchema),
   signalEvent: createResponseEnvelopeSchema(SignalEventSchema),
   sourceProvenance: createResponseEnvelopeSchema(SourceProvenanceSchema)
 } as const;
